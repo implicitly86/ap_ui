@@ -2,48 +2,19 @@
  * ©  Implicitly86 All Rights Reserved
  */
 
-/**
- * Информация о пользователе, хранящаяся в JWT токене.
- *
- * @author Emil Murzakaev.
- */
-class UserInfo {
-
-    /**
-     * Уникальный идентификатор пользователя.
-     */
-    readonly id: number;
-    /**
-     * Имя пользователя.
-     */
-    readonly name: string;
-    /**
-     * Коллекция разрешений пользователя.
-     */
-    readonly authorities: Array<String> = [];
-
-    /**
-     * Конструктор.
-     */
-    constructor(id: number = 0, name: string = "", authorities: Array<String>) {
-        this.id = id;
-        this.name = name;
-        this.authorities = authorities;
-    }
-
-}
+import { User } from "./user";
 
 /**
  * Расшифрованный JWT токен.
  *
  * @author Emil Murzakaev.
  */
-class DecodedToken {
+export class DecodedToken {
 
     /**
      * Информация о пользователе.
      */
-    readonly sub: UserInfo | null;
+    readonly sub: string;
     /**
      * Время выпуска токена.
      */
@@ -56,12 +27,19 @@ class DecodedToken {
     /**
      * Конструктор.
      */
-    constructor(sub: UserInfo | null = null, iat: number = 0, exp: number = 0) {
+    constructor(sub:string = "", iat: number = 0, exp: number = 0) {
         this.sub = sub;
         this.iat = iat;
         this.exp = exp;
     }
 
-}
+    /**
+     * Получить текущего пользователя.
+     *
+     * @return текущий пользователь.
+     */
+    public static getUser(token: DecodedToken): User {
+        return JSON.parse(token.sub);
+    }
 
-export default DecodedToken;
+}

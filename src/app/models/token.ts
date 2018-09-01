@@ -7,7 +7,7 @@
  *
  * @author Emil Murzakaev.
  */
-export default class Token {
+export class Token {
 
     /**
      * Токен в виде строки.

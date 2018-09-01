@@ -3,28 +3,35 @@
  */
 
 /**
- * API серверной части приложения.
+ * Идентификатор, используемый в запросах.
  */
-enum Api {
-    GET_EMPLOYEES = '/employees',
-    DELETE_EXCLUDED_EMPLOYEES = '/excluded-employees',
-    GET_EXCLUDED_EMPLOYEES = '/excluded-employees',
-    POST_EXCLUDED_EMPLOYEES = '/excluded-employees',
-    GET_JIRA_PROJECTS = '/jira-projects',
-    DELETE_MANAGER_EMPLOYEES = '/line-manager-employees',
-    GET_MANAGER_EMPLOYEES = '/line-manager-employees',
-    POST_MANAGER_EMPLOYEES = '/line-manager-employees',
-    PUT_MANAGER_EMPLOYEES = '/line-manager-employees',
-    GET_MANAGERS = '/line-managers',
-    POST_MANAGERS = '/line-managers',
-    POST_LINK_PROJECTS = '/link-projects',
-    GET_LINKED_PROJECTS = '/linked-projects',
-    DELETE_MSP_EXCLUDED_PROJECT = '/msp-excluded-projects',
-    GET_MSP_EXCLUDED_PROJECTS = '/msp-excluded-projects',
-    POST_MSP_EXCLUDED_PROJECT = '/msp-excluded-projects',
-    GET_MSP_PROJECTS = '/msp-projects',
-    POST_UNLINK_PROJECTS = '/unlink-projects',
-    POST_LOGIN = '/login'
+interface IApiAction {
+    id: number | string;
 }
 
-export default Api;
+/**
+ * Параметры запроса, используемые при запросе данных в страничном виде.
+ */
+interface IApiParameters {
+    size: number;
+    page: number;
+}
+
+/**
+ * API серверной части приложения.
+ */
+export const Api = {
+    LOGIN: () => `/login`,
+    DELIVERY_POINT: {
+        BASE: (params?: IApiParameters) => `/delivery-point${params? `?size=${params.size}&page=${params.page}`: ``}`,
+        ACTION: (params: IApiAction) => `${Api.DELIVERY_POINT.BASE}/${params.id}`
+    },
+    CUSTOMER: {
+        BASE: (params?: IApiParameters) => `/customer${params? `?size=${params.size}&page=${params.page}`: ``}`,
+        ACTION: (params: IApiAction) => `${Api.CUSTOMER.BASE}/${params.id}`
+    },
+    ORDER: {
+        BASE: (params?: IApiParameters) => `/order${params? `?size=${params.size}&page=${params.page}`: ``}`,
+        ACTION: (params: IApiAction) => `${Api.ORDER.BASE}/${params.id}`
+    }
+};

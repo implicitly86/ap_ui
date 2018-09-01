@@ -6,12 +6,13 @@ import Vue from "vue";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
-import router from "./router/router";
+import { router } from "./router/router";
 import App from "./components/app.vue";
-import httpClient from "./utils/http_client";
+import { httpClient } from "./utils/http_client";
+import { Constants } from "./constants/common_constants";
 
-if (localStorage.getItem('id_token') != null) {
-    httpClient.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getItem('id_token');
+if (localStorage.getItem(Constants.AUTH.TOKEN_NAME) != null) {
+    httpClient.defaults.headers.common[Constants.AUTH.HEADER_NAME] = Constants.AUTH.HEADER_PREFIX + " " + localStorage.getItem(Constants.AUTH.TOKEN_NAME);
 }
 
 Vue.use(ElementUI);

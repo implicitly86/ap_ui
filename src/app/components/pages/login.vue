@@ -20,13 +20,13 @@
 
     import { Component, Vue } from "vue-property-decorator";
     import { Message } from "element-ui";
-    import * as jwtDecode from 'jwt-decode';
 
-    import httpClient from "../../utils/http_client";
-    import Api from "../../constants/api";
-    import Token from "../../models/token";
-    import router from "../../router/router";
-    import DecodedToken from "../../models/decoded_token";
+    import { httpClient } from "../../utils/http_client";
+    import { Api } from "../../constants/api";
+    import { Token } from "../../models/token";
+    import { router } from "../../router/router";
+    import { Loading } from "../elements/Loading";
+    import { Constants } from "../../constants/common_constants";
 
     /**
      * Компонент, реализующий страницу входа в приложение.
@@ -34,7 +34,7 @@
      * @author Emil Murzakaev.
      */
     @Component
-    export default class Login extends Vue {
+    export default class LoginPage extends Vue {
 
         /**
          * Имя пользователя.
@@ -50,13 +50,21 @@
          * Метод авторизации.
          */
         public authenticate() {
-            httpClient.post<Token>(Api.POST_LOGIN, {
+            Loading.show();
+            httpClient.post<Token>(Api.LOGIN(), {
                 username: this.username,
                 password: this.password
             }).then(response => {
-                localStorage.setItem('id_token', response.data.access_token);
-                httpClient.defaults.headers.common['Authorization'] = "Bearer " + response.data.access_token;
-                router.push(router.currentRoute.query['redirect'] || '/');
+                Loading.close();
+                localStorage.setItem(Constants.AUTH.TOKEN_NAME, response.data.access_token);
+                httpClient.defaults.headers.common[Constants.AUTH.HEADER_NAME] = Constants.AUTH.HEADER_PREFIX + " " + response.data.access_token;
+                let route;
+                if (router.currentRoute.query['redirect'] !== undefined) {
+                    route = {name: router.currentRoute.query['redirect']};
+                }  else {
+                    route = {name: Constants.PAGE_PATH.BASE.name};
+                }
+                router.push(route);
             }).catch(error => Message.error("Неверный логин / пароль" + error.toString()));
         }
 
@@ -101,7 +109,7 @@
         font-family: "Roboto", sans-serif;
         text-transform: uppercase;
         outline: 0;
-        /*background: #4CAF50;*/
+        background: #FFD04B;
         width: 100%;
         border: 0;
         padding: 15px;
@@ -113,7 +121,7 @@
     }
 
     .form button:hover, .form button:active, .form button:focus {
-        /*background: #43A047;*/
+        background: #FFE18C;
     }
 
     .form .message {

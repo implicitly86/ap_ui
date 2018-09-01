@@ -11,9 +11,15 @@
     import * as schedule from "node-schedule";
     import * as jwtDecode from 'jwt-decode';
 
-    import DecodedToken from "../models/decoded_token";
-    import router from "../router/router";
+    import { DecodedToken } from "../models/decoded_token";
+    import { router } from "../router/router";
+    import { Constants } from "../constants/common_constants";
 
+    /**
+     * Основной компонент приложения.
+     *
+     * @author Emil Murzakaev.
+     */
     @Component
     export default class App extends Vue {
 
@@ -21,13 +27,13 @@
             super();
             schedule.scheduleJob('checkTokenExpiration', '*/1 * * * *', () => {
                 let currentRoute = router.currentRoute.name!;
-                if (localStorage.getItem('id_token') != null && currentRoute != 'login') {
-                    let decodedToken: DecodedToken = jwtDecode(localStorage.getItem('id_token')!);
+                if (localStorage.getItem(Constants.AUTH.TOKEN_NAME) != null && currentRoute != Constants.PAGE_PATH.LOGIN.name) {
+                    let decodedToken: DecodedToken = jwtDecode(localStorage.getItem(Constants.AUTH.TOKEN_NAME)!);
                     let currentDateTime = new Date().getTime();
                     let expireDateTime = decodedToken.exp * 1000;
                     if ((expireDateTime - currentDateTime) / 1000 < 60) {
-                        localStorage.removeItem('id_token');
-                        router.push({path: '/login', query: {'redirect': currentRoute}});
+                        localStorage.removeItem(Constants.AUTH.TOKEN_NAME);
+                        router.push({path: Constants.PAGE_PATH.LOGIN.path, query: {'redirect': currentRoute}});
                     }
                 }
             });
