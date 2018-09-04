@@ -1,11 +1,13 @@
 body {
     margin: 0;
 }
+
 /* Контейнер для содержимого страницы */
 .page_content {
     width: 75%;
     margin: auto;
 }
+
 /* Заголовок страницы*/
 .page_label {
     font-size: 2em;
@@ -15,10 +17,12 @@ body {
     -webkit-margin-start: 0;
     -webkit-margin-end: 0;
 }
+
 /* Стиль иконки загрузки */
 .el-loading-mask .path {
     stroke: #FFD04B !important;
 }
+
 .el-loading-mask .el-loading-text {
     color: #FFD04B !important;
 }

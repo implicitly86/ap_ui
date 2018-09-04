@@ -3,24 +3,19 @@
         <navigation :active-index="constants.PAGE_PATH.DELIVERY_POINT.path"></navigation>
         <div class="page_content">
             <div class="page_label">Пункты отправки / доставки</div>
-            <el-table id="delivery_points" :data="deliveryPoints" empty-text="Нет данных">
-                <el-table-column prop="id" label="ID" width="50px"/>
-                <el-table-column prop="name" label="Название"/>
-                <el-table-column prop="address" label="Адрес"/>
-                <el-table-column prop="postcode" label="Почтовый индекс"/>
-                <el-table-column prop="phone" label="Телефон"/>
-                <el-table-column prop="email" label="Электронная почта"/>
-                <el-table-column prop="email" label="" width="50px">
-                    <template slot-scope="scope">
-                        <el-button
-                                size="mini"
-                                type="danger"
-                                @click="handleDelete(scope.$index, scope.row)"
-                        >
-                            <i class="el-icon-delete"></i>
-                        </el-button>
-                    </template>
-                </el-table-column>
+            <el-table
+                    id="delivery_points"
+                    :data="deliveryPoints"
+                    empty-text="Нет данных"
+                    @row-click="loadDeliveryPoint"
+                    @sort-change="handleSortChange"
+            >
+                <el-table-column prop="id" label="ID" width="70px" sortable/>
+                <el-table-column prop="name" label="Название" sortable/>
+                <el-table-column prop="address" label="Адрес" sortable/>
+                <el-table-column prop="postcode" label="Почтовый индекс" sortable/>
+                <el-table-column prop="phone" label="Телефон" sortable/>
+                <el-table-column prop="email" label="Электронная почта" sortable/>
             </el-table>
             <el-pagination
                     id="delivery_points_pagination"
@@ -49,6 +44,8 @@
     import { Page } from "../../models/page";
     import { Loading } from "../elements/Loading";
     import { Constants } from "../../constants/common_constants";
+    import { router } from "../../router/router";
+    import { ElTableColumn } from "element-ui/types/table-column";
 
     /**
      * Компонент, реализующий работу со списком пунктов отправки / доставки.
@@ -78,23 +75,33 @@
          * Общее количество элементов.
          */
         private totalElements: number = 0;
+        /**
+         * Номер текущей страницы.
+         */
+        private currentPage: number = 0;
+        /**
+         * Текущая сортировка.
+         */
+        private currentSort: string | undefined = undefined;
 
         /**
          * Конструктор.
          */
         constructor() {
             super();
-            this.loadDeliveryPoints(0);
+            this.loadDeliveryPoints();
         }
 
         /**
          * Загрузка пунктов отправки / доставки.
          *
          * @param page номер страницы.
+         * @param sort сортировка.
          */
-        private loadDeliveryPoints(page: number) {
+        private loadDeliveryPoints(page?: number, sort?: string) {
             Loading.show();
-            httpClient.get<Page<DeliveryPoint>>(Api.DELIVERY_POINT.BASE({size: Constants.PAGE_SIZE, page: page}))
+            let parameters = {size: Constants.PAGE_SIZE, page: page, sort: sort};
+            httpClient.get<Page<DeliveryPoint>>(Api.DELIVERY_POINT.BASE(parameters))
             .then(response => {
                 let result = response.data;
                 this.deliveryPoints = result.content;
@@ -102,9 +109,9 @@
                     this.showPagination = true;
                     this.totalElements = result.totalElements;
                 }
-                Loading.close();
             })
-            .catch(error => Message.error("Произошла ошибка : " + error.toString()));
+            .catch(error => Message.error("Произошла ошибка : " + error.toString()))
+            .then(() => Loading.close());
         }
 
         /**
@@ -113,7 +120,28 @@
          * @param page номер страницы.
          */
         private handlePageChange(page: number) {
-            this.loadDeliveryPoints(page - 1);
+            this.currentPage = page - 1;
+            this.loadDeliveryPoints(this.currentPage, this.currentSort);
+        }
+
+        /**
+         * Обработка события нажатия на строку в таблице.
+         *
+         * @param deliveryPoint экземпляр DeliveryPoint.
+         */
+        private loadDeliveryPoint(deliveryPoint: DeliveryPoint) {
+            router.push({path: `${Constants.PAGE_PATH.DELIVERY_POINT.path}/${deliveryPoint.id}`});
+        }
+
+        /**
+         * Обработка изменения сортировки.
+         *
+         * @param val событие сортировки.
+         */
+        private handleSortChange(val: { column: ElTableColumn, prop: string | null, order: string | null }) {
+            let order: string | null = val.order ? val.order === "descending" ? "desc" : "asc" : null;
+            this.currentSort = `${val.prop ? val.prop : ``},${order ? order : ``}`;
+            this.loadDeliveryPoints(this.currentPage, this.currentSort);
         }
 
     }

@@ -27,7 +27,7 @@ export class DecodedToken {
     /**
      * Конструктор.
      */
-    constructor(sub:string = "", iat: number = 0, exp: number = 0) {
+    constructor(sub: string = "", iat: number = 0, exp: number = 0) {
         this.sub = sub;
         this.iat = iat;
         this.exp = exp;

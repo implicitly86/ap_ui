@@ -9,9 +9,19 @@ import { User } from "./user";
  *
  * @author Emil Murzakaev.
  */
-export enum CustomerType {
-    naturalPerson = "NATURAL_PERSON",
-    legalPerson = "LEGAL_PERSON"
+export class CustomerType {
+    public static naturalPerson = "NATURAL_PERSON";
+    public static legalPerson = "LEGAL_PERSON";
+
+    public static getDisplayName(val: CustomerType): string {
+        if (val === this.naturalPerson) {
+            return "Физическое лицо";
+        }
+        if (val === this.legalPerson) {
+            return "Юридическое лицо";
+        }
+        return "";
+    }
 }
 
 /**
@@ -60,11 +70,11 @@ export class Customer {
     /**
      * Дата создания.
      */
-    createdDate: Date;
+    createdDate: Date | undefined;
     /**
      * Идентификатор пользователя, создавшего запись.
      */
-    author: User;
+    author: User | undefined;
 
     /**
      * Конструктор.
@@ -91,8 +101,8 @@ export class Customer {
         phone: string = "",
         email: string = "",
         type: string = "",
-        createdDate: Date,
-        author: User
+        createdDate: Date | undefined = undefined,
+        author: User | undefined = undefined
     ) {
         this.id = id;
         this.name = name;
@@ -107,4 +117,14 @@ export class Customer {
         this.author = author;
     }
 
+}
+
+export function toEntity(dto: Customer): Customer {
+    if (dto.type === CustomerType.naturalPerson) {
+        dto.name = `${dto.lastName} ${dto.firstName.substring(0, 1)}. ${dto.middleName.substring(0, 1)}.`;
+        dto.type = "Физ.лицо";
+    } else {
+        dto.type = "Юр.лицо";
+    }
+    return dto;
 }

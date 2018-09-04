@@ -61,7 +61,7 @@
                 let route;
                 if (router.currentRoute.query['redirect'] !== undefined) {
                     route = {name: router.currentRoute.query['redirect']};
-                }  else {
+                } else {
                     route = {name: Constants.PAGE_PATH.BASE.name};
                 }
                 router.push(route);

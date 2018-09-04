@@ -3,13 +3,19 @@
         <navigation :active-index="constants.PAGE_PATH.ORDER.path"></navigation>
         <div class="page_content">
             <div class="page_label">Заказы</div>
-            <el-table id="orders" :data="orders" empty-text="Нет данных">
-                <el-table-column prop="id" label="ID" width="50px"/>
-                <el-table-column prop="barcode" label="Штрих-код"/>
-                <el-table-column prop="customer.name" label="Клиент"/>
-                <el-table-column prop="fromPoint.name" label="Пункт приема заказа"/>
-                <el-table-column prop="toPoint.name" label="Пункт доставки заказа"/>
-                <el-table-column prop="createdDate" label="Дата создания заказа"/>
+            <el-table
+                    id="orders"
+                    :data="orders"
+                    empty-text="Нет данных"
+                    @row-click="loadOrder"
+                    @sort-change="handleSortChange"
+            >
+                <el-table-column prop="id" label="ID" width="70px" sortable/>
+                <el-table-column prop="barcode" label="Штрих-код" sortable/>
+                <el-table-column prop="customer.name" label="Клиент" sortable/>
+                <el-table-column prop="fromPoint.name" label="Пункт приема заказа" sortable/>
+                <el-table-column prop="toPoint.name" label="Пункт доставки заказа" sortable/>
+                <el-table-column prop="createdDate" label="Дата создания заказа" sortable/>
             </el-table>
             <el-pagination
                     id="orders_pagination"
@@ -38,6 +44,8 @@
     import { Api } from "../../constants/api";
     import { Message } from "element-ui";
     import { CustomerType } from "../../models/customer";
+    import { router } from "../../router/router";
+    import { ElTableColumn } from "element-ui/types/table-column";
 
     /**
      * Компонент, реализующий работу со списком заказов.
@@ -67,28 +75,38 @@
          * Общее количество элементов.
          */
         private totalElements: number = 0;
+        /**
+         * Номер текущей страницы.
+         */
+        private currentPage: number = 0;
+        /**
+         * Текущая сортировка.
+         */
+        private currentSort: string | undefined = undefined;
 
         /**
          * Конструктор.
          */
         constructor() {
             super();
-            this.loadOrders(0);
+            this.loadOrders();
         }
 
         /**
          * Загрузка списка заказов.
          *
          * @param page номер страницы.
+         * @param sort сортировка.
          */
-        private loadOrders(page: number) {
+        private loadOrders(page?: number, sort?: string) {
             Loading.show();
-            httpClient.get<Page<Order>>(Api.ORDER.BASE({size: Constants.PAGE_SIZE, page: page}))
+            let parameters = {size: Constants.PAGE_SIZE, page: page, sort: sort};
+            httpClient.get<Page<Order>>(Api.ORDER.BASE(parameters))
             .then(response => {
                 let result = response.data;
                 this.orders = result.content.map(it => {
                     if (it.customer.type === CustomerType.naturalPerson) {
-                        it.customer.name = `${it.customer.lastName} ${it.customer.firstName.substring(0, 1)}. ${it.customer.middleName.substring(0,1)}.`;
+                        it.customer.name = `${it.customer.lastName} ${it.customer.firstName.substring(0, 1)}. ${it.customer.middleName.substring(0, 1)}.`;
                     }
                     return it;
                 });
@@ -96,9 +114,9 @@
                     this.showPagination = true;
                     this.totalElements = result.totalElements;
                 }
-                Loading.close();
             })
-            .catch(error => Message.error("Произошла ошибка : " + error.toString()));
+            .catch(error => Message.error("Произошла ошибка : " + error.toString()))
+            .then(() => Loading.close());
         }
 
         /**
@@ -107,7 +125,28 @@
          * @param page номер страницы.
          */
         private handlePageChange(page: number) {
-            this.loadOrders(page - 1);
+            this.currentPage = page - 1;
+            this.loadOrders(this.currentPage, this.currentSort);
+        }
+
+        /**
+         * Обработка события нажатия на строку в таблице.
+         *
+         * @param order экземпляр Order.
+         */
+        private loadOrder(order: Order) {
+            router.push({path: `${Constants.PAGE_PATH.ORDER.path}/${order.id}`});
+        }
+
+        /**
+         * Обработка изменения сортировки.
+         *
+         * @param val событие сортировки.
+         */
+        private handleSortChange(val: { column: ElTableColumn, prop: string | null, order: string | null }) {
+            let order: string | null = val.order ? val.order === "descending" ? "desc" : "asc" : null;
+            this.currentSort = `${val.prop ? val.prop : ``},${order ? order : ``}`;
+            this.loadOrders(this.currentPage, this.currentSort);
         }
 
     }
@@ -117,6 +156,7 @@
     #orders {
 
     }
+
     #orders_pagination {
         margin-top: 10px;
         text-align: center;

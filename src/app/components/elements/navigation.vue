@@ -103,6 +103,7 @@
     a {
         text-decoration: none;
     }
+
     .right {
         float: right;
         margin-right: 10px;
