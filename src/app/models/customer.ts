@@ -34,39 +34,39 @@ export class Customer {
     /**
      * Уникальный идентификатор.
      */
-    id: number;
+    id: number | undefined;
     /**
      * Название клиента.
      */
-    name: string;
+    name: string | undefined;
     /**
      * Имя клиента.
      */
-    firstName: string;
+    firstName: string | undefined;
     /**
      * Фамилия клиента.
      */
-    lastName: string;
+    lastName: string | undefined;
     /**
      * Отчество клиента.
      */
-    middleName: string;
+    middleName: string | undefined;
     /**
      * Адрес клиента.
      */
-    address: string;
+    address: string | undefined;
     /**
      * Телефон клиента.
      */
-    phone: string;
+    phone: string | undefined;
     /**
      * Почта клиента.
      */
-    email: string;
+    email: string | undefined;
     /**
      * Тип клиента.
      */
-    type: string;
+    type: string | undefined;
     /**
      * Дата создания.
      */
@@ -92,15 +92,15 @@ export class Customer {
      * @param author идентификатор пользователя, создавшего запись.
      */
     constructor(
-        id: number = 0,
-        name: string = "",
-        firstName: string = "",
-        lastName: string = "",
-        middleName: string = "",
-        address: string = "",
-        phone: string = "",
-        email: string = "",
-        type: string = "",
+        id: number | undefined = undefined,
+        name: string | undefined = undefined,
+        firstName: string | undefined = undefined,
+        lastName: string | undefined = undefined,
+        middleName: string | undefined = undefined,
+        address: string | undefined = undefined,
+        phone: string | undefined = undefined,
+        email: string | undefined = undefined,
+        type: string | undefined = undefined,
         createdDate: Date | undefined = undefined,
         author: User | undefined = undefined
     ) {
@@ -117,14 +117,4 @@ export class Customer {
         this.author = author;
     }
 
-}
-
-export function toEntity(dto: Customer): Customer {
-    if (dto.type === CustomerType.naturalPerson) {
-        dto.name = `${dto.lastName} ${dto.firstName.substring(0, 1)}. ${dto.middleName.substring(0, 1)}.`;
-        dto.type = "Физ.лицо";
-    } else {
-        dto.type = "Юр.лицо";
-    }
-    return dto;
 }

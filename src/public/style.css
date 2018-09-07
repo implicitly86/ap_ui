@@ -26,3 +26,8 @@ body {
 .el-loading-mask .el-loading-text {
     color: #FFD04B !important;
 }
+
+/* Строка таблицы с классом pointer */
+.el-table .pointer {
+    cursor: pointer;
+}

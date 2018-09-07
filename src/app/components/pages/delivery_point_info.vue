@@ -47,7 +47,7 @@
     import Navigation from '../elements/navigation';
     import { Api } from "../../constants/api";
     import { DeliveryPoint } from "../../models/delivery_point";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
 
@@ -101,7 +101,10 @@
         private loadDeliveryPoint(id: number) {
             Loading.show();
             httpClient.get<DeliveryPoint>(Api.DELIVERY_POINT.ACTION({id: id}))
-            .then(response => this.deliveryPoint = response.data)
+            .then(response => {
+                this.deliveryPoint = response.data;
+                document.title = `Пункт отправки / доставки "${this.deliveryPoint.name}"`;
+            })
             .catch(error => Message.error("Произошла ошибка : " + error.toString()))
             .then(() => Loading.close());
         }

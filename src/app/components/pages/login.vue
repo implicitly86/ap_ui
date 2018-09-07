@@ -25,7 +25,7 @@
     import { Api } from "../../constants/api";
     import { Token } from "../../models/token";
     import { router } from "../../router/router";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
 
     /**

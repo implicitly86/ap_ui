@@ -22,13 +22,17 @@
                                 placeholder="Начните вводить..."
                                 :remote-method="searchCustomer"
                                 value-key="name"
-                                empty-text="Нет данных"
+                                no-data-text="Ничего не найдено"
                         >
                             <el-option
                                     v-for="item in customers"
                                     :key="item.name"
                                     :label="item.name"
                                     :value="item">
+                                <span class="left_select_option">{{ item.name }}</span>
+                                <span class="right_select_option">
+                                    {{ item.address }} / {{ item.phone }}
+                                </span>
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -41,14 +45,17 @@
                                 placeholder="Начните вводить..."
                                 :remote-method="searchDeliveryPoint"
                                 value-key="name"
+                                no-data-text="Ничего не найдено"
                         >
                             <el-option
                                     v-for="item in deliveryPoints"
                                     :key="item.name"
                                     :label="item.name"
                                     :value="item">
-                                <span style="float: left">{{ item.name }}</span>
-                                <span style="float: right; color: #8492a6; font-size: 13px">{{ item.address }}</span>
+                                <span class="left_select_option">{{ item.name }}</span>
+                                <span class="right_select_option">
+                                    {{ item.postcode }} / {{ item.address }} / {{ item.phone }}
+                                </span>
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -61,12 +68,17 @@
                                 placeholder="Начните вводить..."
                                 :remote-method="searchDeliveryPoint"
                                 value-key="name"
+                                no-data-text="Ничего не найдено"
                         >
                             <el-option
                                     v-for="item in deliveryPoints"
                                     :key="item.name"
                                     :label="item.name"
                                     :value="item">
+                                <span class="left_select_option">{{ item.name }}</span>
+                                <span class="right_select_option">
+                                    {{ item.postcode }} / {{ item.address }} / {{ item.phone }}
+                                </span>
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -104,7 +116,7 @@
     import Navigation from '../elements/navigation';
     import { Api } from "../../constants/api";
     import { DeliveryPoint } from "../../models/delivery_point";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
     import { Order } from "../../models/order";
@@ -175,6 +187,7 @@
                 this.order = response.data;
                 this.customers.push(this.order.customer);
                 this.deliveryPoints.push(this.order.fromPoint, this.order.toPoint);
+                document.title = `Заказ "${this.order.barcode}"`;
             })
             .catch(error => Message.error("Произошла ошибка : " + error.toString()))
             .then(() => Loading.close());
@@ -207,12 +220,12 @@
         private searchCustomer(query: string) {
             if (query.length >= 3) {
                 Loading.show();
-                httpClient.get<Page<Customer>>(Api.CUSTOMER.BASE())
-                .then(response => {
-                    this.customers = response.data.content.filter(item => {
-                        return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
-                    });
-                })
+                let searchFilter = new Customer();
+                searchFilter.name = query;
+                httpClient.post<Page<Customer>>(Api.CUSTOMER.SEARCH({size: Constants.PAGE_SIZE}), searchFilter)
+                .then(response =>
+                    this.customers = response.data.content
+                )
                 .catch(error => Message.error("Произошла ошибка : " + error.toString()))
                 .then(() => Loading.close());
             } else {
@@ -226,12 +239,12 @@
         private searchDeliveryPoint(query: string) {
             if (query.length >= 3) {
                 Loading.show();
-                httpClient.get<Page<DeliveryPoint>>(Api.DELIVERY_POINT.BASE())
-                .then(response => {
-                    this.deliveryPoints = response.data.content.filter(item => {
-                        return item.name.toLowerCase().indexOf(query.toLowerCase()) > -1;
-                    });
-                })
+                let searchFilter = new DeliveryPoint();
+                searchFilter.name = query;
+                httpClient.post<Page<DeliveryPoint>>(Api.DELIVERY_POINT.SEARCH({size: Constants.PAGE_SIZE}), searchFilter)
+                .then(response =>
+                    this.deliveryPoints = response.data.content
+                )
                 .catch(error => Message.error("Произошла ошибка : " + error.toString()))
                 .then(() => Loading.close());
             } else {
@@ -245,5 +258,13 @@
 <style scoped>
     .item_info .el-select {
         width: 100%;
+    }
+    .right_select_option {
+        float: right;
+        color: #8492a6;
+        font-size: 13px;
+    }
+    .left_select_option {
+        float: left;
     }
 </style>

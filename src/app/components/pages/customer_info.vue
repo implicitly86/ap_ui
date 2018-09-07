@@ -8,7 +8,7 @@
                     "{{ customer.name }}"
                 </span>
                 <span v-if="customer !== undefined && customer.type === customerType.naturalPerson">
-                    "{{ customer.lastName }} {{ customer.firstName.substring(0, 1) }}. {{ customer.middleName.substring(0,1)}}."
+                    "{{ customer.lastName }} {{ customer.firstName }} {{ customer.middleName }}"
                 </span>
             </div>
             <div class="item_info" v-if="customer !== undefined">
@@ -84,7 +84,7 @@
     import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
     import { Api } from "../../constants/api";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
     import { Customer, CustomerType } from "../../models/customer";
@@ -140,9 +140,14 @@
          */
         private loadCustomer(id: number) {
             Loading.show();
-            httpClient.get<Customer>(Api.CUSTOMER.ACTION({id: id})).then(response =>
-                this.customer = response.data
-            ).catch(error =>
+            httpClient.get<Customer>(Api.CUSTOMER.ACTION({id: id})).then(response => {
+                this.customer = response.data;
+                if (this.customer.type === CustomerType.naturalPerson) {
+                    document.title = `Клиент "${this.customer.lastName} ${this.customer.firstName!.substring(0, 1)}. ${this.customer.middleName!.substring(0,1)}."`;
+                } else {
+                    document.title = `Клиент "${this.customer.name}"`;
+                }
+            }).catch(error =>
                 Message.error("Произошла ошибка : " + error.toString())
             ).then(() => Loading.close());
         }

@@ -40,27 +40,46 @@ export let router = new VueRouter({
             component: CustomerPage,
             meta: {title: Constants.PAGE_PATH.CUSTOMER.title}
         },
-        {path: `${Constants.PAGE_PATH.CUSTOMER.path}/:id`, name: 'customer', component: CustomerInfo},
+        {
+            path: `${Constants.PAGE_PATH.CUSTOMER.path}/:id`,
+            name: 'customer',
+            component: CustomerInfo
+        },
         {
             path: Constants.PAGE_PATH.DELIVERY_POINT.path,
             name: Constants.PAGE_PATH.DELIVERY_POINT.name,
             component: DeliveryPointPage,
             meta: {title: Constants.PAGE_PATH.DELIVERY_POINT.title}
         },
-        {path: `${Constants.PAGE_PATH.DELIVERY_POINT.path}/:id`, name: 'delivery-point', component: DeliveryPointInfo},
+        {
+            path: `${Constants.PAGE_PATH.DELIVERY_POINT.path}/:id`,
+            name: 'delivery-point',
+            component: DeliveryPointInfo
+        },
         {
             path: Constants.PAGE_PATH.ORDER.path,
             name: Constants.PAGE_PATH.ORDER.name,
             component: OrderPage,
             meta: {title: Constants.PAGE_PATH.ORDER.title}
         },
-        {path: `${Constants.PAGE_PATH.ORDER.path}/:id`, name: 'order', component: OrderInfo},
-        {path: '*', name: "not found", component: NotFound, meta: {title: 'Страница не найдена'}}
+        {
+            path: `${Constants.PAGE_PATH.ORDER.path}/:id`,
+            name: 'order',
+            component: OrderInfo
+        },
+        {
+            path: '*',
+            name: "not found",
+            component: NotFound,
+            meta: {title: 'Страница не найдена'}
+        }
     ]
 });
 
 router.beforeEach((to: Route, from: Route, next) => {
-    document.title = to.meta.title;
+    if (to.meta.title !== undefined) {
+        document.title = to.meta.title;
+    }
     if (localStorage.getItem(Constants.AUTH.TOKEN_NAME) == null && to.name != Constants.PAGE_PATH.LOGIN.name) {
         if (from.name != Constants.PAGE_PATH.LOGIN.name) {
             next({path: Constants.PAGE_PATH.LOGIN.path, query: {'redirect': to.name!}});

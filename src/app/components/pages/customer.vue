@@ -9,6 +9,7 @@
                     empty-text="Нет данных"
                     @row-click="loadCustomer"
                     @sort-change="handleSortChange"
+                    row-class-name="pointer"
             >
                 <el-table-column prop="id" label="ID" width="70px" sortable/>
                 <el-table-column prop="name" label="Клиент" sortable/>
@@ -38,16 +39,16 @@
 
     import { Component, Vue } from "vue-property-decorator";
     import { Message } from "element-ui";
+    import { ElTableColumn } from "element-ui/types/table-column";
 
     import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
     import { Api } from "../../constants/api";
-    import { Customer, toEntity } from "../../models/customer";
+    import { Customer, CustomerType } from "../../models/customer";
     import { Page } from "../../models/page";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
-    import { ElTableColumn } from "element-ui/types/table-column";
 
     /**
      * Компонент, реализующий работу со списком клиентов.
@@ -106,7 +107,10 @@
             httpClient.get<Page<Customer>>(Api.CUSTOMER.BASE(parameters))
             .then(response => {
                 let result = response.data;
-                this.customers = result.content.map(it => toEntity(it));
+                this.customers = result.content.map(it => {
+                    it.type = CustomerType.getDisplayName(it.type!);
+                    return it;
+                });
                 if (result.totalPages > 1) {
                     this.showPagination = true;
                     this.totalElements = result.totalElements;

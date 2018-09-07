@@ -12,27 +12,27 @@ export class DeliveryPoint {
     /**
      * Уникальный идентификатор.
      */
-    readonly id: number;
+    id: number | undefined = undefined;
     /**
      * Название точки доставки.
      */
-    readonly name: string;
+    name: string | undefined = undefined;
     /**
      * Адрес точки доставки.
      */
-    readonly address: string;
+    address: string | undefined = undefined;
     /**
      * Почтовый индекс точки доставки.
      */
-    readonly postcode: string;
+    postcode: string | undefined = undefined;
     /**
      * Телефон точки доставки.
      */
-    readonly phone: string;
+    phone: string | undefined = undefined;
     /**
      * Почта точки доставки.
      */
-    readonly email: string;
+    email: string | undefined = undefined;
 
     /**
      * Конструктор.
@@ -44,8 +44,13 @@ export class DeliveryPoint {
      * @param phone телефон точки доставки.
      * @param email почта точки доставки.
      */
-    constructor(id: number = 0, name: string = "", address: string = "",
-                postcode: string = "", phone: string = "", email: string = "") {
+    constructor(id: number | undefined = undefined,
+                name: string | undefined = undefined,
+                address: string | undefined = undefined,
+                postcode: string | undefined = undefined,
+                phone: string | undefined = undefined,
+                email: string | undefined = undefined
+    ) {
         this.id = id;
         this.name = name;
         this.address = address;

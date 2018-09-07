@@ -9,6 +9,7 @@
                     empty-text="Нет данных"
                     @row-click="loadDeliveryPoint"
                     @sort-change="handleSortChange"
+                    row-class-name="pointer"
             >
                 <el-table-column prop="id" label="ID" width="70px" sortable/>
                 <el-table-column prop="name" label="Название" sortable/>
@@ -36,16 +37,16 @@
 
     import { Component, Vue } from "vue-property-decorator";
     import { Message } from "element-ui";
+    import { ElTableColumn } from "element-ui/types/table-column";
 
     import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
     import { Api } from "../../constants/api";
     import { DeliveryPoint } from "../../models/delivery_point";
     import { Page } from "../../models/page";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
-    import { ElTableColumn } from "element-ui/types/table-column";
 
     /**
      * Компонент, реализующий работу со списком пунктов отправки / доставки.

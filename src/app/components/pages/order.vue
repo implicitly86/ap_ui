@@ -9,6 +9,7 @@
                     empty-text="Нет данных"
                     @row-click="loadOrder"
                     @sort-change="handleSortChange"
+                    row-class-name="pointer"
             >
                 <el-table-column prop="id" label="ID" width="70px" sortable/>
                 <el-table-column prop="barcode" label="Штрих-код" sortable/>
@@ -35,17 +36,18 @@
      */
 
     import { Component, Vue } from "vue-property-decorator";
+    import { ElTableColumn } from "element-ui/types/table-column";
+
     import Navigation from '../elements/navigation';
     import { Constants } from "../../constants/common_constants";
     import { Order } from "../../models/order";
-    import { Loading } from "../elements/Loading";
+    import { Loading } from "../elements/loading";
     import { httpClient } from "../../utils/http_client";
     import { Page } from "../../models/page";
     import { Api } from "../../constants/api";
     import { Message } from "element-ui";
     import { CustomerType } from "../../models/customer";
     import { router } from "../../router/router";
-    import { ElTableColumn } from "element-ui/types/table-column";
 
     /**
      * Компонент, реализующий работу со списком заказов.
@@ -106,7 +108,7 @@
                 let result = response.data;
                 this.orders = result.content.map(it => {
                     if (it.customer.type === CustomerType.naturalPerson) {
-                        it.customer.name = `${it.customer.lastName} ${it.customer.firstName.substring(0, 1)}. ${it.customer.middleName.substring(0, 1)}.`;
+                        it.customer.name = `${it.customer.lastName} ${it.customer.firstName!.substring(0, 1)}. ${it.customer.middleName!.substring(0, 1)}.`;
                     }
                     return it;
                 });

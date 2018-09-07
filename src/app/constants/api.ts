@@ -25,15 +25,17 @@ export const Api = {
     BASE: (url: string, params?: IApiParameters) => `${url}${params ? `?size=${params.size ? params.size : ``}&page=${params.page ? params.page : ``}&sort=${params.sort ? params.sort : ``}` : ``}`,
     LOGIN: () => `/login`,
     DELIVERY_POINT: {
-        BASE: (params?: IApiParameters) => Api.BASE(`/delivery-point`, params),
-        ACTION: (params: IApiAction) => `${Api.DELIVERY_POINT.BASE()}/${params.id}`
+        BASE: (params?: IApiParameters, nextUrl?: string) => Api.BASE(`/delivery-point${nextUrl ? nextUrl : ``}`, params),
+        ACTION: (params: IApiAction) => `${Api.DELIVERY_POINT.BASE()}/${params.id}`,
+        SEARCH: (params?: IApiParameters) => Api.DELIVERY_POINT.BASE(params, `/search`),
     },
     CUSTOMER: {
-        BASE: (params?: IApiParameters) => Api.BASE(`/customer`, params),
-        ACTION: (params: IApiAction) => `${Api.CUSTOMER.BASE()}/${params.id}`
+        BASE: (params?: IApiParameters, nextUrl?: string) => Api.BASE(`/customer${nextUrl ? nextUrl : ``}`, params),
+        ACTION: (params: IApiAction) => `${Api.CUSTOMER.BASE()}/${params.id}`,
+        SEARCH: (params?: IApiParameters) => Api.CUSTOMER.BASE(params, `/search`),
     },
     ORDER: {
-        BASE: (params?: IApiParameters) => Api.BASE(`/order`, params),
+        BASE: (params?: IApiParameters, nextUrl?: string) => Api.BASE(`/order${nextUrl ? nextUrl : ``}`, params),
         ACTION: (params: IApiAction) => `${Api.ORDER.BASE()}/${params.id}`
     }
 };
