@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navigation :active-index="constants.PAGE_PATH.DELIVERY_POINT.path"></navigation>
+        <navigation :active-index="constants.PAGE_PATH.DELIVERY_POINT.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">
                 Пункт отправки / доставки <span v-if="deliveryPoint !== undefined">"{{ deliveryPoint.name }}"</span>

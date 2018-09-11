@@ -5,6 +5,8 @@
 import Vue from "vue";
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import VueFlexboxgrid from 'vue-flexboxgrid'
+import 'vue-flexboxgrid/dist/vue-flexboxgrid.css'
 
 import { router } from "./router/router";
 import App from "./components/app.vue";
@@ -16,6 +18,7 @@ if (localStorage.getItem(Constants.AUTH.TOKEN_NAME) != null) {
 }
 
 Vue.use(ElementUI);
+Vue.use(VueFlexboxgrid);
 
 new Vue({
     el: "#app",

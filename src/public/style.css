@@ -8,7 +8,7 @@ body {
     margin: auto;
 }
 
-/* Заголовок страницы*/
+/* Заголовок страницы */
 .page_label {
     font-size: 2em;
     font-weight: bold;
@@ -16,6 +16,11 @@ body {
     -webkit-margin-after: 0.67em;
     -webkit-margin-start: 0;
     -webkit-margin-end: 0;
+}
+
+/* Действия на странице */
+.page_actions {
+    float: right;
 }
 
 /* Стиль иконки загрузки */

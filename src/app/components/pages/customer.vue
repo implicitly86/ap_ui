@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navigation :active-index="constants.PAGE_PATH.CUSTOMER.path"></navigation>
+        <navigation :active-index="constants.PAGE_PATH.CUSTOMER.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">Клиенты</div>
             <el-table
@@ -136,7 +136,7 @@
          * @param customer экземпляр Customer.
          */
         private loadCustomer(customer: Customer) {
-            router.push({path: `${Constants.PAGE_PATH.CUSTOMER.path}/${customer.id}`});
+            router.push({path: `${Constants.PAGE_PATH.CUSTOMER.ALL.path}/${customer.id}`});
         }
 
         /**

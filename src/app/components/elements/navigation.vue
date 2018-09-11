@@ -10,15 +10,15 @@
         <el-menu-item :index="constants.PAGE_PATH.BASE.path">
             <span>Главная</span>
         </el-menu-item>
-        <el-menu-item :index="constants.PAGE_PATH.DELIVERY_POINT.path">
+        <el-menu-item :index="constants.PAGE_PATH.DELIVERY_POINT.ALL.path">
             <i class="el-icon-rank"></i>
             <span>Пункты отправки / доставки</span>
         </el-menu-item>
-        <el-menu-item :index="constants.PAGE_PATH.CUSTOMER.path">
+        <el-menu-item :index="constants.PAGE_PATH.CUSTOMER.ALL.path">
             <i class="el-icon-star-on"></i>
             <span>Клиенты</span>
         </el-menu-item>
-        <el-menu-item :index="constants.PAGE_PATH.ORDER.path">
+        <el-menu-item :index="constants.PAGE_PATH.ORDER.ALL.path">
             <i class="el-icon-document"></i>
             <span>Заказы</span>
         </el-menu-item>

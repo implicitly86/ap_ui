@@ -1,13 +1,14 @@
 <template>
     <div>
-        <navigation :active-index="constants.PAGE_PATH.ORDER.path"></navigation>
+        <navigation :active-index="constants.PAGE_PATH.ORDER.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">
-                Заказ <span v-if="order !== undefined">"{{ order.barcode }}"</span>
+                <span v-if="order !== undefined && order.id !== undefined">Заказ "{{ order.barcode }}"</span>
+                <span v-if="order !== undefined && order.id === undefined">Новый заказ</span>
             </div>
             <div class="item_info" v-if="order !== undefined">
                 <el-form label-position="left" label-width="200px" :model="order">
-                    <el-form-item label="ID">
+                    <el-form-item label="ID" v-if="order.id !== undefined">
                         <el-input v-model="order.id" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="Штрих-код заказа">
@@ -82,21 +83,26 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Дата создания заказа">
+                    <el-form-item label="Дата создания заказа" v-if="order.createdDate !== undefined">
                         <el-input v-model="order.createdDate" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Автор">
+                    <el-form-item label="Автор" v-if="order.author !== undefined">
                         <el-input v-model="order.author.name" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Дата изменения записи">
+                    <el-form-item label="Дата изменения записи" v-if="order.modifiedDate !== undefined">
                         <el-input v-model="order.modifiedDate" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Изменено">
+                    <el-form-item label="Изменено" v-if="order.modifiedBy !== undefined">
                         <el-input v-model="order.modifiedBy.name" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="saveOrder">Сохранить</el-button>
                         <el-button @click="window.history.back()">Отмена</el-button>
+                        <el-button
+                                @click="deleteOrder"
+                                type="danger"
+                                style="float: right"
+                                v-if="order !== undefined && order.id !== undefined">Удалить</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -110,7 +116,7 @@
      */
 
     import { Component, Vue } from "vue-property-decorator";
-    import { Message } from "element-ui";
+    import { Message, MessageBox } from "element-ui";
 
     import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
@@ -147,7 +153,7 @@
         /**
          * Идентификатор пункта отправки / доставки.
          */
-        private id: number;
+        private id!: number;
         /**
          * Список пунктов отправки / доставки.
          */
@@ -162,17 +168,17 @@
         private deliveryPoints: Array<DeliveryPoint> = [];
 
         /**
-         * Конструктор.
+         * Метод, вызываем при создании компонента.
          */
-        constructor() {
-            super();
+        private created(): void {
             let params = router.currentRoute.params;
             if (params.hasOwnProperty("id")) {
                 this.id = parseInt(params["id"]);
+                this.loadOrder(this.id);
             } else {
                 this.id = -1;
+                this.order = new Order();
             }
-            this.loadOrder(this.id);
         }
 
         /**
@@ -185,8 +191,12 @@
             httpClient.get<Order>(Api.ORDER.ACTION({id: id}))
             .then(response => {
                 this.order = response.data;
-                this.customers.push(this.order.customer);
-                this.deliveryPoints.push(this.order.fromPoint, this.order.toPoint);
+                if (this.order.customer !== undefined) {
+                    this.customers.push(this.order.customer);
+                }
+                if (this.order.fromPoint !== undefined && this.order.toPoint !== undefined) {
+                    this.deliveryPoints.push(this.order.fromPoint, this.order.toPoint);
+                }
                 document.title = `Заказ "${this.order.barcode}"`;
             })
             .catch(error => Message.error("Произошла ошибка : " + error.toString()))
@@ -199,8 +209,9 @@
         private saveOrder() {
             Loading.show();
             if (this.id === -1) {
-                httpClient.post<Order>(Api.ORDER.ACTION({id: this.id}), this.order).then(response => {
+                httpClient.post<Order>(Api.ORDER.BASE(), this.order).then(response => {
                     this.order = response.data;
+                    this.id = this.order.id!;
                     Message.success("Данные сохранены");
                 })
                 .catch(error => Message.error("Произошла ошибка : " + error.toString()))
@@ -212,6 +223,23 @@
                 .catch(error => Message.error("Произошла ошибка : " + error.toString()))
                 .then(() => Loading.close());
             }
+        }
+
+        /**
+         * Удаление заказа.
+         */
+        private deleteOrder() {
+            let message = `Вы действительно хотите удалить заказ <strong>${this.order!.barcode}</strong>?`;
+            let parameters = {confirmButtonText: "Удалить", cancelButtonText: "Отмена", dangerouslyUseHTMLString: true};
+            MessageBox.confirm(message, "Удаление", parameters).then(() => {
+                Loading.show();
+                httpClient.delete(Api.ORDER.ACTION({id: this.id})).then(() => {
+                    Message.success("Данные удалены");
+                    window.history.back();
+                })
+                .catch(error => Message.error("Произошла ошибка : " + error.toString()))
+                .then(() => Loading.close());
+            });
         }
 
         /**

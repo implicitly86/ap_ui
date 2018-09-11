@@ -22,7 +22,7 @@ interface IApiParameters {
  * API серверной части приложения.
  */
 export const Api = {
-    BASE: (url: string, params?: IApiParameters) => `${url}${params ? `?size=${params.size ? params.size : ``}&page=${params.page ? params.page : ``}&sort=${params.sort ? params.sort : ``}` : ``}`,
+    BASE: (url: string, params?: IApiParameters) => `${url}${params ? `?size=${params.size ? params.size : ``}&page=${params.page ? params.page : ``}&sort=${params.sort ? params.sort : `id,asc`}` : ``}`,
     LOGIN: () => `/login`,
     DELIVERY_POINT: {
         BASE: (params?: IApiParameters, nextUrl?: string) => Api.BASE(`/delivery-point${nextUrl ? nextUrl : ``}`, params),

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navigation :active-index="constants.PAGE_PATH.DELIVERY_POINT.path"></navigation>
+        <navigation :active-index="constants.PAGE_PATH.DELIVERY_POINT.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">Пункты отправки / доставки</div>
             <el-table
@@ -131,7 +131,7 @@
          * @param deliveryPoint экземпляр DeliveryPoint.
          */
         private loadDeliveryPoint(deliveryPoint: DeliveryPoint) {
-            router.push({path: `${Constants.PAGE_PATH.DELIVERY_POINT.path}/${deliveryPoint.id}`});
+            router.push({path: `${Constants.PAGE_PATH.DELIVERY_POINT.ALL.path}/${deliveryPoint.id}`});
         }
 
         /**

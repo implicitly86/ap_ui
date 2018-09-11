@@ -1,8 +1,13 @@
 <template>
     <div>
-        <navigation :active-index="constants.PAGE_PATH.ORDER.path"></navigation>
+        <navigation :active-index="constants.PAGE_PATH.ORDER.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">Заказы</div>
+            <div class="page_actions">
+                <router-link :to="constants.PAGE_PATH.ORDER.NEW.path">
+                    <el-button>Создать</el-button>
+                </router-link>
+            </div>
             <el-table
                     id="orders"
                     :data="orders"
@@ -107,7 +112,7 @@
             .then(response => {
                 let result = response.data;
                 this.orders = result.content.map(it => {
-                    if (it.customer.type === CustomerType.naturalPerson) {
+                    if (it.customer !== undefined && it.customer.type === CustomerType.naturalPerson) {
                         it.customer.name = `${it.customer.lastName} ${it.customer.firstName!.substring(0, 1)}. ${it.customer.middleName!.substring(0, 1)}.`;
                     }
                     return it;
@@ -137,7 +142,7 @@
          * @param order экземпляр Order.
          */
         private loadOrder(order: Order) {
-            router.push({path: `${Constants.PAGE_PATH.ORDER.path}/${order.id}`});
+            router.push({path: `${Constants.PAGE_PATH.ORDER.ALL.path}/${order.id}`});
         }
 
         /**

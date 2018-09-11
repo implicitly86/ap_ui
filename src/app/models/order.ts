@@ -16,39 +16,39 @@ export class Order {
     /**
      * Уникальный идентификатор.
      */
-    readonly id: number;
+    id: number | undefined;
     /**
      * Штрих-код заказа.
      */
-    readonly barcode: string;
+    barcode: string | undefined;
     /**
      * Клиент.
      */
-    readonly customer: Customer;
+    customer: Customer | undefined;
     /**
      * Пункт приема заказа.
      */
-    readonly fromPoint: DeliveryPoint;
+    fromPoint: DeliveryPoint | undefined;
     /**
      * Пункт доставки заказа.
      */
-    readonly toPoint: DeliveryPoint;
+    toPoint: DeliveryPoint | undefined;
     /**
      * Дата создания заказа.
      */
-    readonly createdDate: Date;
+    readonly createdDate: Date | undefined;
     /**
      * Пользователь, создавший запись.
      */
-    readonly author: User;
+    readonly author: User | undefined;
     /**
      * Дата изменения записи.
      */
-    readonly modifiedDate: Date;
+    readonly modifiedDate: Date | undefined;
     /**
      * Пользователь, изменивший запись.
      */
-    readonly modifiedBy: User;
+    readonly modifiedBy: User | undefined;
 
     /**
      * Конструктор.
@@ -64,15 +64,15 @@ export class Order {
      * @param modifiedBy пользователь, изменивший запись.
      */
     constructor(
-        id: number = 0,
-        barcode: string = "",
-        customer: Customer,
-        fromPoint: DeliveryPoint,
-        toPoint: DeliveryPoint,
-        createdDate: Date,
-        author: User,
-        modifiedDate: Date,
-        modifiedBy: User
+        id: number | undefined = undefined,
+        barcode: string | undefined = undefined,
+        customer: Customer | undefined = undefined,
+        fromPoint: DeliveryPoint | undefined = undefined,
+        toPoint: DeliveryPoint | undefined = undefined,
+        createdDate: Date | undefined = undefined,
+        author: User | undefined = undefined,
+        modifiedDate: Date | undefined = undefined,
+        modifiedBy: User | undefined = undefined
     ) {
         this.id = id;
         this.barcode = barcode;

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navigation :active-index="constants.PAGE_PATH.CUSTOMER.path"></navigation>
+        <navigation :active-index="constants.PAGE_PATH.CUSTOMER.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">
                 Клиент
