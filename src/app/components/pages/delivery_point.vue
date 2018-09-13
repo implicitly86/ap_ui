@@ -3,6 +3,11 @@
         <navigation :active-index="constants.PAGE_PATH.DELIVERY_POINT.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">Пункты отправки / доставки</div>
+            <div class="page_actions">
+                <router-link :to="constants.PAGE_PATH.DELIVERY_POINT.NEW.path">
+                    <el-button icon="el-icon-plus">Создать</el-button>
+                </router-link>
+            </div>
             <el-table
                     id="delivery_points"
                     :data="deliveryPoints"
@@ -35,18 +40,18 @@
      * ©  Implicitly86 All Rights Reserved
      */
 
-    import { Component, Vue } from "vue-property-decorator";
+    import { Vue } from "vue-property-decorator";
+    import Component from "vue-class-component";
     import { Message } from "element-ui";
     import { ElTableColumn } from "element-ui/types/table-column";
+    import { inject } from "vue-typescript-inject";
 
-    import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
-    import { Api } from "../../constants/api";
     import { DeliveryPoint } from "../../models/delivery_point";
-    import { Page } from "../../models/page";
     import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
+    import { DeliveryPointService } from "../../services/delivery_point_service";
 
     /**
      * Компонент, реализующий работу со списком пунктов отправки / доставки.
@@ -56,7 +61,8 @@
     @Component({
         components: {
             Navigation
-        }
+        },
+        providers: [DeliveryPointService]
     })
     export default class DeliveryPointPage extends Vue {
 
@@ -84,6 +90,11 @@
          * Текущая сортировка.
          */
         private currentSort: string | undefined = undefined;
+        /**
+         * Сервис, реализующий доступ к сущности Пункт отправки / доставки.
+         */
+        @inject()
+        private deliveryPointService!: DeliveryPointService;
 
         /**
          * Конструктор.
@@ -101,9 +112,7 @@
          */
         private loadDeliveryPoints(page?: number, sort?: string) {
             Loading.show();
-            let parameters = {size: Constants.PAGE_SIZE, page: page, sort: sort};
-            httpClient.get<Page<DeliveryPoint>>(Api.DELIVERY_POINT.BASE(parameters))
-            .then(response => {
+            this.deliveryPointService.getAll(page, sort).then(response => {
                 let result = response.data;
                 this.deliveryPoints = result.content;
                 if (result.totalPages > 1) {

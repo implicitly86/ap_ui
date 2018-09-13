@@ -3,6 +3,11 @@
         <navigation :active-index="constants.PAGE_PATH.CUSTOMER.ALL.path"></navigation>
         <div class="page_content">
             <div class="page_label">Клиенты</div>
+            <div class="page_actions">
+                <router-link :to="constants.PAGE_PATH.CUSTOMER.NEW.path">
+                    <el-button icon="el-icon-plus">Создать</el-button>
+                </router-link>
+            </div>
             <el-table
                     id="customers"
                     :data="customers"
@@ -37,18 +42,18 @@
      * ©  Implicitly86 All Rights Reserved
      */
 
-    import { Component, Vue } from "vue-property-decorator";
+    import { Vue } from "vue-property-decorator";
+    import Component from "vue-class-component";
     import { Message } from "element-ui";
     import { ElTableColumn } from "element-ui/types/table-column";
 
-    import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
-    import { Api } from "../../constants/api";
     import { Customer, CustomerType } from "../../models/customer";
-    import { Page } from "../../models/page";
     import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
+    import { CustomerService } from "../../services/customer_service";
+    import { inject } from "vue-typescript-inject";
 
     /**
      * Компонент, реализующий работу со списком клиентов.
@@ -58,7 +63,8 @@
     @Component({
         components: {
             Navigation
-        }
+        },
+        providers: [CustomerService]
     })
     export default class CustomerPage extends Vue {
 
@@ -86,6 +92,11 @@
          * Текущая сортировка.
          */
         private currentSort: string | undefined = undefined;
+        /**
+         * Сервис, реализующий доступ к сущности Клиент.
+         */
+        @inject()
+        private customerService!: CustomerService;
 
         /**
          * Конструктор.
@@ -103,9 +114,7 @@
          */
         private loadCustomers(page?: number, sort?: string) {
             Loading.show();
-            let parameters = {size: Constants.PAGE_SIZE, page: page, sort: sort};
-            httpClient.get<Page<Customer>>(Api.CUSTOMER.BASE(parameters))
-            .then(response => {
+            this.customerService.getAll(page, sort).then(response => {
                 let result = response.data;
                 this.customers = result.content.map(it => {
                     it.type = CustomerType.getDisplayName(it.type!);

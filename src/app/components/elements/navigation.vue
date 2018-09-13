@@ -8,23 +8,24 @@
             :router="true"
     >
         <el-menu-item :index="constants.PAGE_PATH.BASE.path">
+            <v-icon name="home"/>
             <span>Главная</span>
         </el-menu-item>
         <el-menu-item :index="constants.PAGE_PATH.DELIVERY_POINT.ALL.path">
-            <i class="el-icon-rank"></i>
+            <v-icon name="shipping-fast"/>
             <span>Пункты отправки / доставки</span>
         </el-menu-item>
         <el-menu-item :index="constants.PAGE_PATH.CUSTOMER.ALL.path">
-            <i class="el-icon-star-on"></i>
+            <v-icon name="users"/>
             <span>Клиенты</span>
         </el-menu-item>
         <el-menu-item :index="constants.PAGE_PATH.ORDER.ALL.path">
-            <i class="el-icon-document"></i>
+            <v-icon name="dolly-flatbed"/>
             <span>Заказы</span>
         </el-menu-item>
         <el-submenu index="" class="right">
             <template slot="title">
-                <i class="el-icon-more"></i>
+                <v-icon name="cogs"/>
                 <span>{{currentUser().name}}</span>
             </template>
             <el-menu-item index="" @click="logout">Выход</el-menu-item>

@@ -1,14 +1,27 @@
 <template>
-    <div class="login-page">
-        <div class="form">
-            <form class="login-form" :action="authenticate">
-                <el-input class="custom_input" placeholder="Имя пользователя" v-model="username"></el-input>
-                <el-input class="custom_input" placeholder="Пароль" v-model="password" type="password">
-                    <i class="el-icon-edit el-input__icon" slot="suffix"></i>
-                </el-input>
-                <el-button type="primary" @click="authenticate">Вход</el-button>
-                <p class="message"><a href="#">Забыли пароль?</a></p>
-            </form>
+    <div>
+        <parallax-container class="horizontal-card centered-card">
+            <parallax-element class="text-container" :parallaxStrength="10" :type="'depth'">
+                <div class="logo">
+                    <h1><span>Awesome Project</span></h1>
+                </div>
+            </parallax-element>
+            <parallax-element class="background-image" :parallaxStrength="-10" :type="'depth'">
+            </parallax-element>
+        </parallax-container>
+        <div class="login-page">
+            <div class="form">
+                <form class="login-form" :action="authenticate">
+                    <el-input class="custom_input" placeholder="Имя пользователя" v-model="username">
+                        <v-icon class="icon" name="user" slot="suffix"/>
+                    </el-input>
+                    <el-input class="custom_input" placeholder="Пароль" v-model="password" type="password">
+                        <v-icon class="icon" name="key" slot="suffix"/>
+                    </el-input>
+                    <el-button type="primary" @click="authenticate">Вход</el-button>
+                    <p class="message"><a href="#">Забыли пароль?</a></p>
+                </form>
+            </div>
         </div>
     </div>
 </template>
@@ -74,7 +87,7 @@
 <style scoped>
     .login-page {
         width: 360px;
-        padding: 15% 0 0 !important;
+        /*padding: 15% 0 0 !important;*/
         margin: auto;
     }
 
@@ -105,6 +118,10 @@
         */
     }
 
+    .custom_input .icon{
+        height: 100%;
+    }
+
     .form button {
         font-family: "Roboto", sans-serif;
         text-transform: uppercase;
@@ -133,5 +150,27 @@
     .form .message a {
         color: #CACACA;
         text-decoration: none;
+    }
+
+    .logo {
+        /*background: url(http://www.color-hex.com/palettes/26323.png) repeat;*/
+        margin:10px;
+        text-align: center;
+    }
+    .logo h1 {
+        background-color:#fff;
+        overflow:hidden;
+        display:inline-block;
+        padding:10px;
+        font-weight:bold;
+        font-family:arial;
+        color:transparent;
+        font-size: 8em;
+    }
+    .logo span {
+         background: url(http://www.color-hex.com/palettes/26323.png) -20px -20px repeat;
+         -webkit-text-fill-color: transparent;
+         -webkit-background-clip: text;
+         display:block;
     }
 </style>

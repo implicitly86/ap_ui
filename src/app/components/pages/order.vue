@@ -5,7 +5,7 @@
             <div class="page_label">Заказы</div>
             <div class="page_actions">
                 <router-link :to="constants.PAGE_PATH.ORDER.NEW.path">
-                    <el-button>Создать</el-button>
+                    <el-button icon="el-icon-plus">Создать</el-button>
                 </router-link>
             </div>
             <el-table
@@ -40,19 +40,19 @@
      * ©  Implicitly86 All Rights Reserved
      */
 
-    import { Component, Vue } from "vue-property-decorator";
+    import { Vue } from "vue-property-decorator";
+    import Component from "vue-class-component";
     import { ElTableColumn } from "element-ui/types/table-column";
+    import { inject } from "vue-typescript-inject";
 
     import Navigation from '../elements/navigation';
     import { Constants } from "../../constants/common_constants";
     import { Order } from "../../models/order";
     import { Loading } from "../elements/loading";
-    import { httpClient } from "../../utils/http_client";
-    import { Page } from "../../models/page";
-    import { Api } from "../../constants/api";
     import { Message } from "element-ui";
     import { CustomerType } from "../../models/customer";
     import { router } from "../../router/router";
+    import { OrderService } from "../../services/order_service";
 
     /**
      * Компонент, реализующий работу со списком заказов.
@@ -62,7 +62,8 @@
     @Component({
         components: {
             Navigation
-        }
+        },
+        providers: [OrderService]
     })
     export default class OrderPage extends Vue {
 
@@ -90,6 +91,11 @@
          * Текущая сортировка.
          */
         private currentSort: string | undefined = undefined;
+        /**
+         * Сервис, реализующий доступ к сущности Заказ.
+         */
+        @inject()
+        private orderService!: OrderService;
 
         /**
          * Конструктор.
@@ -107,9 +113,7 @@
          */
         private loadOrders(page?: number, sort?: string) {
             Loading.show();
-            let parameters = {size: Constants.PAGE_SIZE, page: page, sort: sort};
-            httpClient.get<Page<Order>>(Api.ORDER.BASE(parameters))
-            .then(response => {
+            this.orderService.getAll(page, sort).then(response => {
                 let result = response.data;
                 this.orders = result.content.map(it => {
                     if (it.customer !== undefined && it.customer.type === CustomerType.naturalPerson) {

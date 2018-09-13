@@ -43,7 +43,8 @@ export let router = new VueRouter({
         {
             path: Constants.PAGE_PATH.CUSTOMER.NEW.path,
             name: Constants.PAGE_PATH.CUSTOMER.NEW.name,
-            component: CustomerInfo
+            component: CustomerInfo,
+            meta: {title: Constants.PAGE_PATH.CUSTOMER.NEW.title}
         },
         {
             path: Constants.PAGE_PATH.CUSTOMER.ONE.path,
@@ -59,7 +60,8 @@ export let router = new VueRouter({
         {
             path: Constants.PAGE_PATH.DELIVERY_POINT.NEW.path,
             name: Constants.PAGE_PATH.DELIVERY_POINT.NEW.name,
-            component: DeliveryPointInfo
+            component: DeliveryPointInfo,
+            meta: {title: Constants.PAGE_PATH.DELIVERY_POINT.NEW.title}
         },
         {
             path: Constants.PAGE_PATH.DELIVERY_POINT.ONE.path,
@@ -75,7 +77,8 @@ export let router = new VueRouter({
         {
             path: Constants.PAGE_PATH.ORDER.NEW.path,
             name: Constants.PAGE_PATH.ORDER.NEW.name,
-            component: OrderInfo
+            component: OrderInfo,
+            meta: {title: Constants.PAGE_PATH.ORDER.NEW.title}
         },
         {
             path: Constants.PAGE_PATH.ORDER.ONE.path,

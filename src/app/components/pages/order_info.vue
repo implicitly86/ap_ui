@@ -7,14 +7,14 @@
                 <span v-if="order !== undefined && order.id === undefined">Новый заказ</span>
             </div>
             <div class="item_info" v-if="order !== undefined">
-                <el-form label-position="left" label-width="200px" :model="order">
-                    <el-form-item label="ID" v-if="order.id !== undefined">
+                <el-form label-position="left" label-width="200px" :model="order" :rules="rules">
+                    <el-form-item label="ID" v-if="order.id !== undefined" prop="id">
                         <el-input v-model="order.id" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Штрих-код заказа">
+                    <el-form-item label="Штрих-код заказа" prop="barcode">
                         <el-input v-model="order.barcode"></el-input>
                     </el-form-item>
-                    <el-form-item label="Клиент">
+                    <el-form-item label="Клиент" prop="customer">
                         <el-select
                                 v-model="order.customer"
                                 filterable
@@ -37,7 +37,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Пункт приема заказа">
+                    <el-form-item label="Пункт приема заказа" prop="fromPoint">
                         <el-select
                                 v-model="order.fromPoint"
                                 filterable
@@ -60,7 +60,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Пункт доставки заказа">
+                    <el-form-item label="Пункт доставки заказа" prop="toPoint">
                         <el-select
                                 v-model="order.toPoint"
                                 filterable
@@ -83,16 +83,16 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="Дата создания заказа" v-if="order.createdDate !== undefined">
+                    <el-form-item label="Дата создания заказа" v-if="order.createdDate !== undefined" prop="createdDate">
                         <el-input v-model="order.createdDate" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Автор" v-if="order.author !== undefined">
+                    <el-form-item label="Автор" v-if="order.author !== undefined" prop="author">
                         <el-input v-model="order.author.name" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Дата изменения записи" v-if="order.modifiedDate !== undefined">
+                    <el-form-item label="Дата изменения записи" v-if="order.modifiedDate !== undefined" prop="modifiedDate">
                         <el-input v-model="order.modifiedDate" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="Изменено" v-if="order.modifiedBy !== undefined">
+                    <el-form-item label="Изменено" v-if="order.modifiedBy !== undefined" prop="modifiedBy">
                         <el-input v-model="order.modifiedBy.name" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item>
@@ -115,19 +115,21 @@
      * ©  Implicitly86 All Rights Reserved
      */
 
-    import { Component, Vue } from "vue-property-decorator";
+    import { Vue } from "vue-property-decorator";
+    import Component from "vue-class-component";
     import { Message, MessageBox } from "element-ui";
+    import { inject } from "vue-typescript-inject";
 
-    import { httpClient } from "../../utils/http_client";
     import Navigation from '../elements/navigation';
-    import { Api } from "../../constants/api";
     import { DeliveryPoint } from "../../models/delivery_point";
     import { Loading } from "../elements/loading";
     import { Constants } from "../../constants/common_constants";
     import { router } from "../../router/router";
     import { Order } from "../../models/order";
     import { Customer } from "../../models/customer";
-    import { Page } from "../../models/page";
+    import { CustomerService } from "../../services/customer_service";
+    import { DeliveryPointService } from "../../services/delivery_point_service";
+    import { OrderService } from "../../services/order_service";
 
     /**
      * Компонент, реализующий работу с сущностью Заказ.
@@ -138,13 +140,34 @@
         components: {
             Navigation
         },
+        providers: [CustomerService, DeliveryPointService, OrderService],
         data: function () {
             return {
                 order: undefined,
                 constants: Constants,
                 window: window,
                 customers: [],
-                deliveryPoints: []
+                deliveryPoints: [],
+                rules: {
+                    barcode: [
+                        { required: true, message: 'Введите штрих-код', trigger: 'blur' },
+                        {
+                            min: 1,
+                            pattern: '^([0-9]{5}-){3}[0-9]{5}$',
+                            message: 'Штрих-код не соответствует формату (00000-00000-00000-00000)',
+                            trigger: 'blur'
+                        }
+                    ],
+                    customer: [
+                        { required: true, message: 'Выберите клиента', trigger: 'change' }
+                    ],
+                    fromPoint: [
+                        { required: true, message: 'Выберите пункт приема заказа', trigger: 'change' }
+                    ],
+                    toPoint: [
+                        { required: true, message: 'Выберите пункт доставки заказа', trigger: 'change' }
+                    ]
+                }
             }
         }
     })
@@ -157,7 +180,7 @@
         /**
          * Список пунктов отправки / доставки.
          */
-        private order: Order | undefined = undefined;
+        private order!: Order;
         /**
          * Список клиентов.
          */
@@ -166,6 +189,21 @@
          * Список пунктов отправки / доставки.
          */
         private deliveryPoints: Array<DeliveryPoint> = [];
+        /**
+         * Сервис, реализующий доступ к сущности Клиент.
+         */
+        @inject()
+        private customerService!: CustomerService;
+        /**
+         * Сервис, реализующий доступ к сущности Пункт отправки / доставки.
+         */
+        @inject()
+        private deliveryPointService!: DeliveryPointService;
+        /**
+         * Сервис, реализующий доступ к сущности Заказ.
+         */
+        @inject()
+        private orderService!: OrderService;
 
         /**
          * Метод, вызываем при создании компонента.
@@ -188,8 +226,7 @@
          */
         private loadOrder(id: number) {
             Loading.show();
-            httpClient.get<Order>(Api.ORDER.ACTION({id: id}))
-            .then(response => {
+            this.orderService.getOne(id).then(response => {
                 this.order = response.data;
                 if (this.order.customer !== undefined) {
                     this.customers.push(this.order.customer);
@@ -208,21 +245,13 @@
          */
         private saveOrder() {
             Loading.show();
-            if (this.id === -1) {
-                httpClient.post<Order>(Api.ORDER.BASE(), this.order).then(response => {
-                    this.order = response.data;
-                    this.id = this.order.id!;
-                    Message.success("Данные сохранены");
-                })
-                .catch(error => Message.error("Произошла ошибка : " + error.toString()))
-                .then(() => Loading.close());
-            } else {
-                httpClient.put<void>(Api.ORDER.ACTION({id: this.id}), this.order).then(() =>
-                    Message.success("Данные сохранены")
-                )
-                .catch(error => Message.error("Произошла ошибка : " + error.toString()))
-                .then(() => Loading.close());
-            }
+            this.orderService.save(this.order).then(response => {
+                this.order = response.data;
+                this.id = this.order.id!;
+                Message.success("Данные сохранены");
+            })
+            .catch(error => Message.error("Произошла ошибка : " + error.toString()))
+            .then(() => Loading.close());
         }
 
         /**
@@ -233,7 +262,7 @@
             let parameters = {confirmButtonText: "Удалить", cancelButtonText: "Отмена", dangerouslyUseHTMLString: true};
             MessageBox.confirm(message, "Удаление", parameters).then(() => {
                 Loading.show();
-                httpClient.delete(Api.ORDER.ACTION({id: this.id})).then(() => {
+                this.orderService.delete(this.id).then(() => {
                     Message.success("Данные удалены");
                     window.history.back();
                 })
@@ -250,8 +279,7 @@
                 Loading.show();
                 let searchFilter = new Customer();
                 searchFilter.name = query;
-                httpClient.post<Page<Customer>>(Api.CUSTOMER.SEARCH({size: Constants.PAGE_SIZE}), searchFilter)
-                .then(response =>
+                this.customerService.search(searchFilter).then(response =>
                     this.customers = response.data.content
                 )
                 .catch(error => Message.error("Произошла ошибка : " + error.toString()))
@@ -269,8 +297,7 @@
                 Loading.show();
                 let searchFilter = new DeliveryPoint();
                 searchFilter.name = query;
-                httpClient.post<Page<DeliveryPoint>>(Api.DELIVERY_POINT.SEARCH({size: Constants.PAGE_SIZE}), searchFilter)
-                .then(response =>
+                this.deliveryPointService.search(searchFilter).then(response =>
                     this.deliveryPoints = response.data.content
                 )
                 .catch(error => Message.error("Произошла ошибка : " + error.toString()))
