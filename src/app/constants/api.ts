@@ -23,7 +23,7 @@ interface IApiParameters {
  */
 export const Api = {
     BASE: (url: string, params?: IApiParameters) => `${url}${params ? `?size=${params.size ? params.size : ``}&page=${params.page ? params.page : ``}&sort=${params.sort ? params.sort : `id,asc`}` : ``}`,
-    LOGIN: () => `/login`,
+    LOGIN: () => `/auth/login`,
     DELIVERY_POINT: {
         BASE: (params?: IApiParameters, nextUrl?: string) => Api.BASE(`/delivery-point${nextUrl ? nextUrl : ``}`, params),
         ACTION: (params: IApiAction) => `${Api.DELIVERY_POINT.BASE()}/${params.id}`,

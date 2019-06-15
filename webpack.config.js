@@ -83,7 +83,7 @@ module.exports = (env, argv) => {
                 'process.env': {
                     NODE_ENV: '"development"',
                     BASE_API_URL: '"http://localhost"',
-                    BASE_API_PORT: '"8080"'
+                    BASE_API_PORT: '"10000"'
                 }
             })
         ])
@@ -94,7 +94,7 @@ module.exports = (env, argv) => {
                 'process.env': {
                     NODE_ENV: '"production"',
                     BASE_API_URL: '"http://localhost"',
-                    BASE_API_PORT: '"8080"'
+                    BASE_API_PORT: '"10000"'
                 }
             }),
             new webpack.LoaderOptionsPlugin({
