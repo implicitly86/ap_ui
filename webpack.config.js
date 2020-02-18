@@ -1,10 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 let config = {
-    entry: './src/app/index.ts',
+    entry: './src/app/index.tsx',
     output: {
         path: path.resolve(__dirname, './dist'),
         publicPath: '/dist/',
@@ -13,28 +12,17 @@ let config = {
     module: {
         rules: [
             {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        // Since sass-loader (weirdly) has SCSS as its default parse mode, we map
-                        // the "scss" and "sass" values for the lang attribute to the right configs here.
-                        // other preprocessors should work out of the box, no loader config like this necessary.
-                        scss: 'vue-style-loader!css-loader!sass-loader',
-                        sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax',
-                        ts: 'ts-loader'
-                    },
-                    esModule: true
-                    // other vue-loader mspProjectOptions go here
-                }
-            },
-            {
                 test: /\.tsx?$/,
                 loader: 'ts-loader',
-                exclude: /node_modules/,
-                options: {
-                    appendTsSuffixTo: [/\.vue$/],
-                }
+                query: {
+                    'ignoreDiagnostics': [
+                        2403, // 2403 -> Subsequent variable declarations
+                        2300, // 2300 Duplicate identifier
+                        2374, // 2374 -> Duplicate number index signature
+                        2375  // 2375 -> Duplicate string index signature
+                    ]
+                },
+                exclude: [ /\.spec\.ts$/, /\.e2e\.ts$/, /node_modules/ ]
             },
             {
                 test: /\.css$/,
@@ -52,23 +40,12 @@ let config = {
         ]
     },
     resolve: {
-        extensions: ['.ts', '.js', '.vue', '.json', '.css'],
-        alias: {
-            'vue$': 'vue/dist/vue.esm.js'
-        }
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css']
     },
     plugins: [
-        /*
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false
-            }
-        })
-        */
         new CopyWebpackPlugin([
             {from: 'src/public', to: __dirname + "/dist", ignore: ['*.styl']}
-        ]),
-        new VueLoaderPlugin()
+        ])
     ],
     performance: {
         hints: false

@@ -7,9 +7,13 @@
         "moduleResolution": "node",
         "target": "es5",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "noImplicitAny": false,
+        "jsx": "react",
+        "lib": ["es5", "es6", "dom"]
     },
     "include": [
+        "./src/**/*.tsx",
         "./src/**/*.ts"
     ]
 }

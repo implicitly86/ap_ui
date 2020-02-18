@@ -4,9 +4,9 @@ module.exports = {
         'dist/**/*.{html,htm,css,js}'
     ],
     server: {
-      baseDir: 'dist',
-      middleware: {
-        1: require('connect-history-api-fallback')({index: '/index.html', verbose: true})
-      }
+        baseDir: 'dist',
+        middleware: {
+            1: require('connect-history-api-fallback')({index: '/index.html', verbose: true})
+        }
     }
 };
