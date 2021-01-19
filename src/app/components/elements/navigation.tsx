@@ -4,7 +4,9 @@
 
 import * as React from "react";
 import {Link} from 'react-router-dom'
-import {Icon, Menu} from "antd";
+import {Menu} from "antd";
+import {ArrowsAltOutlined, LogoutOutlined, ShoppingOutlined, UserOutlined} from "@ant-design/icons";
+
 // import "./nav.css";
 import {Constants} from "../../constants/common_constants";
 import {history} from "../../utils/history";
@@ -41,21 +43,25 @@ export class Navigation extends React.Component<NavigationProps, any> {
             <Menu selectedKeys={[this.props.index]} mode="horizontal" onClick={this.handleClick} className="navigation">
                 <Menu.Item key={Constants.PAGE_PATH.DELIVERY_POINT.ALL.name}>
                     <Link to={Constants.PAGE_PATH.DELIVERY_POINT.ALL.path}>
-                        <Icon type="arrows-alt"/>Пункты отправки / доставки
+                        <ArrowsAltOutlined/>
+                        Пункты отправки / доставки
                     </Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.PAGE_PATH.CUSTOMER.ALL.name}>
                     <Link to={Constants.PAGE_PATH.CUSTOMER.ALL.path}>
-                        <Icon type="user" theme="outlined"/>Клиенты
+                        <UserOutlined/>
+                        Клиенты
                     </Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.PAGE_PATH.ORDER.ALL.name}>
                     <Link to={Constants.PAGE_PATH.ORDER.ALL.path}>
-                        <Icon type="shopping" theme="outlined"/>Заказы
+                        <ShoppingOutlined/>
+                        Заказы
                     </Link>
                 </Menu.Item>
                 <Menu.Item key="logout" className="last_item">
-                    <Icon type="logout" theme="outlined"/>Выход
+                    <LogoutOutlined/>
+                    Выход
                 </Menu.Item>
             </Menu>
         );

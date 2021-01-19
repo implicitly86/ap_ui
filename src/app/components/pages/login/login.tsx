@@ -3,7 +3,8 @@
  */
 
 import * as React from "react";
-import {Button, Icon, Input, message} from "antd";
+import {Button, Input, message} from "antd";
+import {LockOutlined, UserOutlined} from "@ant-design/icons";
 
 import './login.css';
 import {httpClient} from "../../../utils/http_client";
@@ -81,14 +82,14 @@ export class Login extends React.Component<any, LoginState> {
                 <div className="form">
                     <form className="login-form">
                         <Input
-                            prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                            prefix={<UserOutlined/>}
                             placeholder="Имя пользователя"
                             onChange={this.onChangeUserName}
                             className="custom_input"
                             id="login"
                         />
                         <Input
-                            prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                            prefix={<LockOutlined/>}
                             placeholder="Пароль"
                             onChange={this.onChangePassword}
                             className="custom_input"

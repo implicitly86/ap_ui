@@ -123,6 +123,13 @@ export class DeliveryPoint extends React.Component<any, DeliveryPointState> {
                                     total: this.state.totalElements,
                                     onChange: page => this.loadDeliveryPoints(page - 1),
                                 }}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onClick: event => {
+                                            this.props.history.push(Constants.PAGE_PATH.DELIVERY_POINT.ALL.path + "/" + record.id);
+                                        }
+                                    };
+                                }}
                             />
                         </Col>
                     </Row>
